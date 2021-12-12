@@ -1,46 +1,39 @@
 package com.algorithm;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Synchronized;
 
 import java.util.*;
 
-public class Dictionary implements AbstactsDictionary{
+public class Dictionary {
     List<String> matcherWords;
-    Map<String,List<Location>> findWords= new TreeMap<>();
-    public Dictionary(String[] words){
-
-        insert(words);
+    @Setter @Getter
+    private int offset;
+    @Getter
+    static Map<String,List<Location>> findWords= Collections.synchronizedMap(new TreeMap<>());
+    public Dictionary(String[] keyWords){
+       this(Arrays.asList(keyWords));
     }
 
-    public void insert(String[] text){
-        matcherWords= new ArrayList<>(text.length);
-        for(int i=0;i< text.length;i++)
-           matcherWords.add(text[i]);
+    public Dictionary(List<String> matcherWords){
+        this.matcherWords=matcherWords;
     }
 
-    public Map<String,List<Location>> searchInFullText(List<String> words) {
-        int lineId=0;
+    public  void searchInFullText(List<String> words) {
+        int lineId=-1;
         for(String element  : words) {
-            search(element,lineId++);
+            findWorld(element,++lineId);
         }
-        return  findWords;
     }
-    public Map<String,List<Location>> searchInFullText(String[] words) {
-       List<String > text=  Arrays.asList(words);
-        int lineId=0;
-       for(String element  : text) {
-          search(element, lineId++);
-       }
-       return  findWords;
-    }
-    @Override
-    public void search(String text, int lineId) {
+
+    private void findWorld(String text, int lineId) {
       String[]  elements=   text.split(" ") ;
-      List<Location> location = new ArrayList<>();
       int worldPos=0;
       for(String word : elements) {
           worldPos++;
          if( isPartOfLst(word)) {
-             Location point= new Location(lineId, worldPos);
+             Location point= new Location(lineId+offset, worldPos);
              List<Location> prevPoints=  findWords.get(word);
              if(prevPoints==null) {
                  prevPoints= new ArrayList<>();
@@ -59,6 +52,7 @@ public class Dictionary implements AbstactsDictionary{
         }
         return false;
     }
+
 }
 
 class Location {
