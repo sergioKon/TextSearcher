@@ -112,7 +112,7 @@ public class YamlTest {
             Parameters params = (Parameters) ois.readObject();
             Assert.assertNotNull(params);
             file = new File("src/main/resources/app.bin");
-        }
+           }
            Files.delete(file.toPath());
-    }
+      }
 }
